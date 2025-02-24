@@ -24,6 +24,8 @@ class SimpleCNN(nn.Module):
         self.classifier = nn.Linear(64*5*5, n_way)
         
     def forward(self, x):
+        x = x.view(-1, 3, 84, 84)
         x = self.features(x)
         x = x.view(x.size(0), -1)
+        # print(x.shape)
         return self.classifier(x)

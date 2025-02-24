@@ -15,6 +15,8 @@ class MAML(nn.Module):
         # 内循环：在支持集上进行快速适应
         for _ in range(self.inner_steps):
             preds = functional_call(self.model, fast_weights, support_x)
+            support_y = support_y.squeeze()
+            # print(support_y.shape)
             loss = nn.CrossEntropyLoss()(preds, support_y)
             grads = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
             # 使用梯度下降更新fast_weights
@@ -22,5 +24,6 @@ class MAML(nn.Module):
                             for ((name, param), grad) in zip(fast_weights.items(), grads)}
         # 查询集上计算更新后模型的损失
         query_preds = functional_call(self.model, fast_weights, query_x)
+        query_y = query_y.squeeze()
         query_loss = nn.CrossEntropyLoss()(query_preds, query_y)
-        return query_loss
+        return query_loss, query_preds
