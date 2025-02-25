@@ -21,7 +21,7 @@ class SimpleCNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2)   # 10 -> 5
         )
-        self.classifier = nn.Linear(64*5*5, n_way)
+        self.classifier = nn.Linear(64 * 5 * 5, n_way)
         
     def forward(self, x):
         x = x.view(-1, 3, 84, 84)
