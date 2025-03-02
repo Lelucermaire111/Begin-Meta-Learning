@@ -9,11 +9,14 @@ class MAML(nn.Module):
         self.inner_lr = inner_lr
         self.inner_steps = inner_steps
 
-    def forward(self, support_x, support_y, query_x, query_y):
+    def forward(self, support_x, support_y, query_x, query_y, inner_steps = None):
         # 复制一份模型参数作为内循环更新的起点
         fast_weights = {name: param.clone() for name, param in self.model.named_parameters()}
+        # 验证时调整内循环步数
+        if inner_steps is None:
+            inner_steps = self.inner_steps
         # 内循环：在支持集上进行快速适应
-        for _ in range(self.inner_steps):
+        for _ in range(inner_steps):
             preds = functional_call(self.model, fast_weights, support_x)
             support_y = support_y.squeeze()
             # print(support_y.shape)
